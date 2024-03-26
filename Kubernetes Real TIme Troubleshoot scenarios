@@ -1,0 +1,110 @@
+
+
+kubernetes Troubleshoot scenarios 
+
+kubernetes troubleshooting is the process of identifying, diagnosing and resolving issues in kubernetes clusters,nodes,pods or containers.
+
+
+Three Pillars of kubernetes Troubleshooting 
+
+1. understanding the problem 
+2. managing and remediating on problem 
+3. preventing the problem from recurring 
+
+troubleshooting kubernetes pods 
+
+# kubectl describe pod [name]
+
+
+1. pod stays pending 
+
+reasons :- 
+- insuffiecient resources in the cluster - the cluster may have insufficient CPU or memory resources. this means you'll
+  need to delete some pods, add resources on your nodes or add more nodes 
+- Resource Requirements - the pod may be difficult to schedule due to specific Resources Requirements. See if you can 
+  release some of requirements to make the pod eligible for scheduling on additional nodes 
+
+
+2. Pod Stays waiting 
+ reason :- 
+
+    - image name - ensure the image name in the pod manifest is correct 
+    - image available - ensure the image is really available in the repository 
+    - test Manually - run a docker pull command on the local machine, ensuring you have the appropriate permissions,
+      to see if you can retrieve the imagef
+
+
+3. Diagnosing Other Pod Issues  [ we have pod inside that we have container inside that we have our appln in jar or  tar]
+
+    - Examining Pod Logs 
+    - Debugging with Container Exec 
+    - Debugging with an Ephemeral Debug Container 
+    - Running a Debug Pod on the Node 
+
+Examining Pod Logs 
+kubectl logs [pod-name] [container-name]
+
+debugging with Container Exec
+kubectl exec [pod-name] -c [container-name] -- [bash or sh]
+
+
+4. issue in cluster 
+
+solution - Retrieve Cluster Logs 
+
+NODE TYPE           COMPONENT               WHERE TO FIND LOGS 
+
+MASTER              API Server              /var/log/kube-apiserver.log
+fff
+MASTER              scheduler               /var/log/kube-schedular.log
+
+MASTER              Controller Manager      /var/log/kube-controller-manager.log
+
+WORKER              kubelet                 /var/log/kubelet.log
+
+WORKER              Kube Proxy              /var/log/kube-proxy.log
+
+
+Create ContainerConfigError 
+
+this error is usually the result of a missing secret or ConfigMap. secreats are Kubernetes objects used to store like
+database credentials ConfigMaps Store data as key-value pairs are typically used to hold configuration of multiple pods
+configuration means variable required to run container ex- postgres - username, password, dbname.
+
+ 
+command to troubleshoot this error 
+
+# kubectl describe pod pod-missing-config
+
+kubectl get configmap [config-map-name]
+
+
+ImagePullBackOff or ErrImagePull
+
+kubectl describe pod [name]
+
+
+    reasons
+        1. wrong image name or tags 
+        2. Authentication issue in container Registry
+        3. pod does not have an RBAC Role that allows it to perform the Operation 
+
+
+CrashLoopBackOff
+
+    1. Insufficient Resources :- if there are insufficient Resources on the node, 
+    2. volume mounting -: if you see the issue is mounting a storage volume, check which volume the pod is to mount ensure it is defined correctly 
+    3.user of hostport :- if you are binding pods to hostport, you may only be able to schedule one pod per node.in most cases you can avoid using hostport and use a service object to enable communication with your pod 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
